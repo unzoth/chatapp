@@ -76,6 +76,17 @@ class DeleteDialogRequest(BaseModel):
     """删除对话请求模型"""
     username: str
 
+# 定义修改密码请求模型
+class ChangePasswordRequest(BaseModel):
+    username: str
+    old_password: str
+    new_password: str
+
+# 定义修改密码响应模型
+class ChangePasswordResponse(BaseModel):
+    message: str
+    success: bool
+
 # ----------------- 对话与聊天记录的响应模型 -----------------
 
 class ChatRecordResponse(BaseModel):

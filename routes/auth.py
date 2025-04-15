@@ -10,7 +10,8 @@ from models import User
 from schemas import (
     RegisterRequest, RegisterResponse,
     LoginRequest, LoginResponse,
-    TokenVerifyRequest, TokenVerifyResponse
+    TokenVerifyRequest, TokenVerifyResponse,
+    ChangePasswordRequest, ChangePasswordResponse
 )
 from utils import (
     hash_password, get_user_by_username,
@@ -118,3 +119,41 @@ async def logout(request: TokenVerifyRequest, db: Session = Depends(get_db)):
         return {"message": "登出成功"}
     else:
         raise HTTPException(status_code=400, detail="登出失败，用户不存在")
+
+@router.post("/change_password", response_model=ChangePasswordResponse)
+async def change_password(request: ChangePasswordRequest, db: Session = Depends(get_db)):
+    """
+    修改用户密码
+
+    Args:
+        request: 修改密码请求
+        db: 数据库会话
+
+    Returns:
+        修改密码响应
+
+    Raises:
+        HTTPException: 当用户不存在或密码验证失败时
+    """
+    # 获取用户
+    user = get_user_by_username(db, request.username)
+    if not user:
+        raise HTTPException(status_code=400, detail="用户不存在")
+
+    # 验证旧密码
+    old_password_hash = hash_password(request.old_password)
+    if user.password_hash != old_password_hash:
+        raise HTTPException(status_code=400, detail="原密码错误")
+
+    # 修改密码
+    user.password_hash = hash_password(request.new_password)
+    db.commit()
+    db.refresh(user)
+
+    # 使当前令牌失效，强制用户重新登录
+    invalidate_token(db, request.username)
+
+    return ChangePasswordResponse(
+        message="密码修改成功，请重新登录",
+        success=True
+    )
