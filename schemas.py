@@ -96,6 +96,7 @@ class ChatRecordResponse(BaseModel):
     role: int  # 1 表示用户发送，0 表示 AI 回复
     created_at: datetime
     media_url: Optional[str] = None
+    reasoning_content: Optional[str] = None
 
 class DialogWithRecordsResponse(BaseModel):
     """带有聊天记录的对话响应模型"""

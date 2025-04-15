@@ -157,7 +157,8 @@ async def get_dialogs(username: str, db: Session = Depends(get_db)):
                     "content": record.content,
                     "role": record.role,
                     "created_at": record.created_at,
-                    "media_url": record.media_url
+                    "media_url": record.media_url,
+                    "reasoning_content": record.reasoning_content  # 添加推理内容
                 }
                 for record in records
             ]

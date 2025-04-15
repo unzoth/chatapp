@@ -20,7 +20,7 @@ STOP_FLAGS = {}
 
 
 def save_to_db(db: Session, user: User, dialog: Dialog, question: str, answer: str,
-               image_path: Optional[str] = None):
+               image_path: Optional[str] = None,reasoning_content=None):
     """
     保存聊天记录到数据库
 
@@ -48,7 +48,8 @@ def save_to_db(db: Session, user: User, dialog: Dialog, question: str, answer: s
         dialog_id=dialog.dialog_id,
         user_id=user.user_id,
         content=answer,
-        role=0
+        role=0,
+        reasoning_content=reasoning_content
     )
     db.add(chat_record_user)
     db.add(chat_record_ai)
